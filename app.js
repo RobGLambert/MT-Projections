@@ -296,7 +296,7 @@
     var scope = document.getElementById("results-scope");
     if (state.level === "ALL") {
       title.textContent = "All levels \u2014 overview";
-      scope.textContent = "MT-03 through MT-08 \u00B7 lowest & highest step";
+      scope.textContent = "MT-03 through MT-07 \u00B7 lowest & highest step";
     } else {
       title.textContent = state.level.replace("MT", "MT-") + " \u2014 all steps";
       scope.textContent = getStepKeys(state.level).length + " steps \u00B7 " + state.term + "-year projection";
