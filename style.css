@@ -1,0 +1,392 @@
+/* ============================================================
+   MT Pay Ledger — token system
+   Subject: a shared contract-raise ledger for MT-graded colleagues.
+   Palette: ledger paper + pine ink + money-green gains + a
+   rust flag color + an official gold for the stamp/signature.
+   Type: Spectral (serif, official-document authority) for display,
+   IBM Plex Sans for UI labels, IBM Plex Mono for every figure
+   (tabular numerals matter — this is a ledger, not a headline).
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --paper: #eef2ea;
+  --paper-raised: #f7f9f4;
+  --ink: #1c2b21;
+  --ink-soft: #4c5c50;
+  --line: #c6d1c0;
+  --line-strong: #9fae97;
+  --gain: #2f6f4e;
+  --gain-bg: #e2ede2;
+  --flag: #a8532f;
+  --flag-bg: #f3e4dc;
+  --gold: #a6812f;
+  --gold-bg: #f1e9d2;
+
+  --font-display: 'Spectral', Georgia, serif;
+  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius: 3px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px);
+  background-size: 100% 2.1rem;
+  background-attachment: local;
+}
+
+::selection { background: var(--gold-bg); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--gain);
+  outline-offset: 2px;
+}
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2.25rem 1.5rem 4rem;
+}
+
+/* ---------- Masthead ---------- */
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 3px double var(--line-strong);
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.masthead h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.9rem;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.masthead .kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.masthead .sub {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  max-width: 34ch;
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* ---------- Layout: controls + results ---------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+@media (max-width: 880px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* ---------- Control panel ---------- */
+
+.panel {
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.25rem 1.4rem;
+  position: sticky;
+  top: 1.25rem;
+}
+
+@media (max-width: 880px) {
+  .panel { position: static; }
+}
+
+.field {
+  margin-bottom: 1.15rem;
+}
+
+.field:last-child { margin-bottom: 0; }
+
+.field-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+
+.field-hint {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
+input[type="number"], select {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+}
+
+input[type="number"]:focus, select:focus {
+  border-color: var(--gain);
+}
+
+.segmented {
+  display: flex;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.segmented button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.5rem 0.4rem;
+  cursor: pointer;
+  color: var(--ink-soft);
+  border-right: 1px solid var(--line-strong);
+}
+.segmented button:last-child { border-right: none; }
+
+.segmented button.active {
+  background: var(--gain);
+  color: #fff;
+}
+
+.stepped-years {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 0.15rem;
+}
+
+.stepped-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stepped-row label {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  width: 4.6rem;
+  flex-shrink: 0;
+}
+
+.stepped-row input {
+  flex: 1;
+}
+
+.wage-toggle {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.wage-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+hr.rule {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 1.15rem 0;
+}
+
+/* ---------- Results area ---------- */
+
+.results-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.results-head h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.results-head .scope {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Stamp: the signature element — an official-looking approval
+   stamp that reports the scenario in play. */
+.stamp {
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius);
+  transform: rotate(-1.4deg);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gold-bg);
+  white-space: nowrap;
+}
+
+.stamp b {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+/* ---------- Table ---------- */
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+}
+
+table.ledger {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+}
+
+table.ledger caption {
+  caption-side: top;
+  text-align: left;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  padding: 0.6rem 0.9rem 0;
+}
+
+table.ledger th, table.ledger td {
+  padding: 0.55rem 0.85rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+table.ledger thead th {
+  border-bottom: 2px solid var(--line-strong);
+  font-weight: 600;
+  color: var(--ink);
+  vertical-align: bottom;
+}
+
+table.ledger thead th.year-cell {
+  text-align: right;
+}
+
+table.ledger thead .delta {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--gain);
+  margin-top: 0.15rem;
+}
+
+table.ledger th.row-label, table.ledger td.row-label {
+  text-align: left;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+table.ledger tbody tr {
+  border-bottom: 1px solid var(--line);
+}
+table.ledger tbody tr:last-child { border-bottom: none; }
+
+table.ledger tbody tr:nth-child(even) {
+  background: rgba(159, 174, 151, 0.08);
+}
+
+table.ledger td.base-col {
+  color: var(--ink-soft);
+  border-right: 1px solid var(--line-strong);
+}
+
+table.ledger td .cell-delta {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--gain);
+}
+
+table.ledger td .cell-delta.flag { color: var(--flag); }
+
+.range-sep {
+  color: var(--ink-soft);
+  margin: 0 0.3rem;
+  font-weight: 400;
+}
+
+footer.note {
+  margin-top: 1.75rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+
+footer.note code {
+  font-family: var(--font-mono);
+  background: var(--paper);
+  padding: 0.05rem 0.3rem;
+  border-radius: 2px;
+}

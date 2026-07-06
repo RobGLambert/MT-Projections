@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MT Pay Ledger — Contract Raise Projections</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <span class="kicker">MT Group · Contract Modeling Tool</span>
+      <h1>The MT Pay Ledger</h1>
+    </div>
+    <p class="sub">Model proposed raises against the 2025-10-01 pay scale, year over year, across every MT level and step.</p>
+  </header>
+
+  <div class="layout">
+
+    <!-- ===================== CONTROL PANEL ===================== -->
+    <aside class="panel">
+
+      <div class="field">
+        <label class="field-label" for="level-select">MT Level</label>
+        <select id="level-select">
+          <option value="ALL">All levels (overview)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="term-input">Contract length (years)</label>
+        <input type="number" id="term-input" min="1" max="15" step="1" value="4">
+        <p class="field-hint">Base year is 2025-10-01. A 4-year term projects 2026 through 2029.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Raise structure</label>
+        <div class="segmented" id="mode-toggle">
+          <button type="button" data-mode="consistent" class="active">Consistent %</button>
+          <button type="button" data-mode="stepped">Stepped %</button>
+        </div>
+      </div>
+
+      <div class="field" id="consistent-field">
+        <label class="field-label" for="consistent-input">Annual increase (%)</label>
+        <input type="number" id="consistent-input" step="0.1" value="2">
+        <p class="field-hint">Applied year over year — each year is +X% of the year before, not of 2025.</p>
+      </div>
+
+      <div class="field" id="stepped-field" style="display:none;">
+        <label class="field-label">Per-year increase (%)</label>
+        <div class="stepped-years" id="stepped-years"></div>
+        <p class="field-hint">Y1 = 2026 applied to 2025, Y2 = 2027 applied to Y1, and so on.</p>
+      </div>
+
+      <hr class="rule">
+
+      <div class="field">
+        <label class="field-label">Wage basis</label>
+        <div class="wage-toggle">
+          <label><input type="radio" name="wage-basis" value="annual" checked> Annual</label>
+          <label><input type="radio" name="wage-basis" value="hourly"> Hourly</label>
+        </div>
+      </div>
+
+      <div class="field" id="hours-field" style="display:none;">
+        <label class="field-label" for="hours-input">Hours per week</label>
+        <input type="number" id="hours-input" min="1" step="0.5" value="37.5">
+        <p class="field-hint">Hourly = annual ÷ (hours/week × 52.176 weeks). Adjust to match your work week.</p>
+      </div>
+
+    </aside>
+
+    <!-- ===================== RESULTS ===================== -->
+    <main>
+      <div class="results-head">
+        <div>
+          <h2 id="results-title">All levels — overview</h2>
+          <span class="scope" id="results-scope"></span>
+        </div>
+        <div class="stamp" id="stamp">
+          <span id="stamp-text">4-YR · +2.0%/YR</span>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="ledger" id="ledger-table"></table>
+      </div>
+
+      <footer class="note">
+        Figures are projections only, built from the 2025-10-01 published pay scale, and do not represent a ratified agreement.
+        Green sub-values show the year-over-year dollar increase; the base year (2025) column is shown for reference and is not itself increased.
+        Hourly figures use <code>annual ÷ (hours/week × 52.176)</code> — change the hours/week field to match your schedule.
+      </footer>
+    </main>
+
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
